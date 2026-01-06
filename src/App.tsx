@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import HeroBanner from './components/HeroBanner';
 import CarePlanModal from './components/CarePlanModal';
 import ConfirmationModal from './components/ConfirmationModal';
 import ExampleModal from './components/ExampleModal';
@@ -24,30 +25,35 @@ const CONTENT = {
 const App: React.FC = () => {
   return (
     <>
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        {/* Main Content */}
-        <div className="mt-20">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
-            {CONTENT.PAGE_TITLE}
-          </h1>
+      <div className="min-h-screen bg-gray-50">
+        {/* Hero Banner */}
+        <HeroBanner />
 
-          {/* Multiple Modal Triggers */}
-          <div className="flex gap-4 justify-center">
-            <button
-              data-modal-open={MODAL_IDS.CARE_PLAN}
-              className="bg-purple-primary hover:bg-purple-dark text-white font-semibold py-3 px-8 rounded-lg transition-colors"
-              type="button"
-            >
-              {CONTENT.BUTTONS.OPEN_CARE_PLAN}
-            </button>
+        {/* Demo Section */}
+        <div className="flex items-center justify-center p-4 py-16">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              {CONTENT.PAGE_TITLE}
+            </h2>
 
-            <button
-              data-modal-open={MODAL_IDS.EXAMPLE}
-              className="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
-              type="button"
-            >
-              {CONTENT.BUTTONS.OPEN_EXAMPLE}
-            </button>
+            {/* Multiple Modal Triggers */}
+            <div className="flex gap-4 justify-center">
+              <button
+                data-modal-open={MODAL_IDS.CARE_PLAN}
+                className="bg-purple-primary hover:bg-purple-dark text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+                type="button"
+              >
+                {CONTENT.BUTTONS.OPEN_CARE_PLAN}
+              </button>
+
+              <button
+                data-modal-open={MODAL_IDS.EXAMPLE}
+                className="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+                type="button"
+              >
+                {CONTENT.BUTTONS.OPEN_EXAMPLE}
+              </button>
+            </div>
           </div>
         </div>
       </div>
