@@ -215,24 +215,35 @@ const createHandleCloseClick = (
     e.preventDefault();
     e.stopPropagation();
 
-    // Check if we're in the confirm-close modal
-    const confirmCloseModal = (e.target as HTMLElement).closest('[data-modal="confirm-close"]');
-    if (confirmCloseModal) {
-      // "Keep going" button - only close the confirmation modal
-      closeModal('confirm-close', 'user');
+    // Find the modal we're trying to close
+    const modalContainer = (e.target as HTMLElement).closest<HTMLElement>('[data-modal]');
+    if (!modalContainer) {
+      closeModal(undefined, 'user');
       return;
     }
 
-    // Check if we're trying to close the care-plan modal
-    const carePlanModalContainer = (e.target as HTMLElement).closest('[data-modal="care-plan"]');
-    if (carePlanModalContainer) {
-      // Show confirmation modal on top WITHOUT closing care-plan
-      openModal('confirm-close');
+    const modalId = modalContainer.getAttribute('data-modal');
+    const requiresConfirmation = modalContainer.getAttribute('data-requires-confirmation') === 'true';
+    const confirmationModalId = modalContainer.getAttribute('data-confirmation-modal-id');
+
+    // If this modal requires confirmation
+    if (requiresConfirmation && confirmationModalId) {
+      // Check if we're already IN the confirmation modal
+      const isConfirmationModal = modalContainer.getAttribute('data-modal') === confirmationModalId;
+
+      if (isConfirmationModal) {
+        // "Keep going" button - only close the confirmation modal
+        closeModal(confirmationModalId, 'user');
+        return;
+      }
+
+      // Show confirmation modal on top WITHOUT closing the current modal
+      openModal(confirmationModalId);
       return;
     }
 
-    // Close normally for other modals
-    closeModal(undefined, 'user');
+    // Close normally for modals that don't require confirmation
+    closeModal(modalId || undefined, 'user');
   }
 };
 
@@ -243,9 +254,30 @@ const createHandleConfirmCancel = (closeModal: ReturnType<typeof createCloseModa
 
   if (confirmButton) {
     e.preventDefault();
-    // Close all modals (both confirmation and care-plan)
-    closeModal('confirm-close', 'user');
-    closeModal('care-plan', 'user');
+
+    // Find the confirmation modal we're in
+    const confirmationModal = confirmButton.closest<HTMLElement>('[data-modal]');
+    if (!confirmationModal) return;
+
+    const confirmationModalId = confirmationModal.getAttribute('data-modal');
+    if (!confirmationModalId) return;
+
+    // Find the modal that required this confirmation by searching for a modal with this confirmation modal ID
+    const parentModal = document.querySelector<HTMLElement>(
+      `[data-confirmation-modal-id="${confirmationModalId}"]`
+    );
+
+    if (parentModal) {
+      const parentModalId = parentModal.getAttribute('data-modal');
+      // Close both the confirmation modal and the parent modal
+      closeModal(confirmationModalId, 'user');
+      if (parentModalId) {
+        closeModal(parentModalId, 'user');
+      }
+    } else {
+      // Fallback: just close the confirmation modal
+      closeModal(confirmationModalId, 'user');
+    }
   }
 };
 

@@ -13,6 +13,8 @@ const Modal: React.FC<ModalProps> = ({
   showCloseButton = true,
   backdropClass = 'bg-purple-primary/90',
   disclaimer = null,
+  requiresConfirmation = false,
+  confirmationModalId,
 }) => {
   const maxWidthClasses: Record<NonNullable<ModalProps['maxWidth']>, string> = {
     sm: 'max-w-sm',
@@ -30,6 +32,8 @@ const Modal: React.FC<ModalProps> = ({
       id={`${id}-modal`}
       className="hidden fixed inset-0 opacity-0 transition-opacity duration-300 overflow-y-auto"
       data-modal={id}
+      data-requires-confirmation={requiresConfirmation ? 'true' : 'false'}
+      data-confirmation-modal-id={confirmationModalId || ''}
       style={{ zIndex: 50 }}
     >
       {/* Backdrop */}

@@ -23,6 +23,8 @@ export interface ModalProps {
   showCloseButton?: boolean;
   backdropClass?: string;
   disclaimer?: React.ReactNode;
+  requiresConfirmation?: boolean;
+  confirmationModalId?: ModalId;
 }
 
 export interface ModalConfig {

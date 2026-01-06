@@ -45,6 +45,8 @@ const App: React.FC = () => {
       {/* Care Plan Modal */}
       <Modal
         id="care-plan"
+        requiresConfirmation={true}
+        confirmationModalId="confirm-close"
         disclaimer={
           <>
             <strong>
