@@ -47,6 +47,7 @@ const App: React.FC = () => {
         id="care-plan"
         requiresConfirmation={true}
         confirmationModalId="confirm-close"
+        fullScreenOnMobile={true}
         disclaimer={
           <>
             <strong>
@@ -81,7 +82,7 @@ const App: React.FC = () => {
               800-870-8479
             </a>
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-col md:flex-row gap-4 justify-center">
             <button
               data-modal-close
               className="flex-1 border-2 border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-50 transition-colors"

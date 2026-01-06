@@ -15,6 +15,7 @@ const Modal: React.FC<ModalProps> = ({
   disclaimer = null,
   requiresConfirmation = false,
   confirmationModalId,
+  fullScreenOnMobile = false,
 }) => {
   const maxWidthClasses: Record<NonNullable<ModalProps['maxWidth']>, string> = {
     sm: 'max-w-sm',
@@ -60,41 +61,74 @@ const Modal: React.FC<ModalProps> = ({
 
         {/* Modal Content - Centered */}
         <div
-          className={`flex-1 flex items-center justify-center p-0 md:p-4 ${
-            disclaimer ? 'md:pt-8 md:pb-8' : 'md:py-8'
-          }`}
+          className={`flex-1 flex items-center justify-center ${
+            fullScreenOnMobile ? 'p-0 md:p-4' : 'p-4'
+          } ${disclaimer ? 'md:pt-8 md:pb-8' : 'md:py-8'}`}
         >
-          <div
-            className={`relative bg-white rounded-none md:rounded-2xl shadow-xl ${maxWidthClasses[maxWidth]} w-full min-h-screen md:min-h-0`}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={`${id}-title`}
-          >
-            {/* Modal Body */}
-            <div className="p-6 md:p-12">
-              {/* Close Button */}
-              {showCloseButton && (
-                <button
-                  data-modal-close
-                  className="mb-6 w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors border border-gray-300"
-                  aria-label="Close modal"
-                  type="button"
+          <div className="relative flex items-start">
+            {/* Close Button - Outside on desktop, inside on mobile */}
+            {showCloseButton && (
+              <button
+                data-modal-close
+                className={`${
+                  fullScreenOnMobile
+                    ? 'absolute top-6 left-6 md:relative md:top-0 md:left-0 md:mr-2.5'
+                    : 'hidden md:block md:mr-2.5 md:mt-4'
+                } w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors border border-gray-300 bg-white z-10 cursor-pointer`}
+                aria-label="Close modal"
+                type="button"
+              >
+                <svg
+                  className="w-6 h-6 text-gray-600"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
                 >
-                  <svg
-                    className="w-6 h-6 text-gray-600"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+
+            <div
+              className={`relative bg-white ${
+                fullScreenOnMobile ? 'rounded-none md:rounded-2xl' : 'rounded-2xl'
+              } shadow-xl ${maxWidthClasses[maxWidth]} w-full ${
+                fullScreenOnMobile ? 'min-h-screen md:min-h-0' : ''
+              }`}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={`${id}-title`}
+            >
+              {/* Modal Body */}
+              <div className="p-6 md:p-12">
+                {/* Close Button - Mobile only for non-fullscreen modals */}
+                {showCloseButton && !fullScreenOnMobile && (
+                  <button
+                    data-modal-close
+                    className="md:hidden mb-6 w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors border border-gray-300 cursor-pointer"
+                    aria-label="Close modal"
+                    type="button"
                   >
-                    <path d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              )}
-              {children}
+                    <svg
+                      className="w-6 h-6 text-gray-600"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+                {children}
+              </div>
             </div>
           </div>
         </div>

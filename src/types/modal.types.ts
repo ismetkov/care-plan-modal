@@ -25,6 +25,7 @@ export interface ModalProps {
   disclaimer?: React.ReactNode;
   requiresConfirmation?: boolean;
   confirmationModalId?: ModalId;
+  fullScreenOnMobile?: boolean;
 }
 
 export interface ModalConfig {
