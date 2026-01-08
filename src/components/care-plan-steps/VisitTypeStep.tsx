@@ -7,12 +7,22 @@ import React from 'react';
 
 const VisitTypeStep: React.FC = () => {
   return (
-    <div className="py-8 text-center">
-      <div className="bg-gray-100 rounded-lg p-12 border-2 border-dashed border-gray-300">
-        <h3 className="text-2xl font-semibold text-gray-700 mb-2">Visit Type Selection</h3>
-        <p className="text-gray-500">This step will be implemented next</p>
+    <>
+      {/* Title and Description */}
+      <div className="mb-8">
+        <h2 className="text-4xl font-serif mb-4">What type of visit do you need?</h2>
+        <p className="text-gray-600">Select the type of care visit you require.</p>
+        <p className="text-sm text-gray-500 mt-2">* Indicates a required field</p>
       </div>
-    </div>
+
+      {/* Placeholder Content */}
+      <div className="py-8 text-center">
+        <div className="bg-gray-100 rounded-lg p-12 border-2 border-dashed border-gray-300">
+          <h3 className="text-2xl font-semibold text-gray-700 mb-2">Visit Type Selection</h3>
+          <p className="text-gray-500">This step will be implemented next</p>
+        </div>
+      </div>
+    </>
   );
 };
 

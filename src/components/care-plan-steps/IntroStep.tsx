@@ -18,6 +18,13 @@ interface IntroStepProps {
 const IntroStep: React.FC<IntroStepProps> = ({ formData, onChange }) => {
   return (
     <>
+      {/* Title and Description */}
+      <div className="mb-8">
+        <h2 className="text-4xl font-serif mb-4">Who are we helping today?</h2>
+        <p className="text-gray-600">We need a little information to get you started.</p>
+        <p className="text-sm text-gray-500 mt-2">* Indicates a required field</p>
+      </div>
+
       {/* Name Fields */}
       <div className="grid grid-cols-2 gap-4">
         <div>

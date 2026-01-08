@@ -11,7 +11,6 @@ import {
   SchedulingStep,
   ReviewStep,
   StepProgress,
-  StepHeader,
   BackButton,
 } from './care-plan-steps';
 
@@ -23,29 +22,6 @@ interface FormData {
   email: string;
   carePlanFor: string;
 }
-
-const STEP_CONFIG = {
-  intro: {
-    title: 'Who are we helping today?',
-    description: 'We need a little information to get you started.',
-  },
-  visitType: {
-    title: 'What type of visit do you need?',
-    description: 'Select the type of care visit you require.',
-  },
-  location: {
-    title: 'Where will the visit take place?',
-    description: 'Let us know where care will be provided.',
-  },
-  scheduling: {
-    title: 'When would you like to schedule?',
-    description: 'Choose your preferred date and time.',
-  },
-  review: {
-    title: 'Review your care plan',
-    description: 'Please review your information before submitting.',
-  },
-};
 
 const CarePlanForm: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<FormStep>('intro');
@@ -89,12 +65,6 @@ const CarePlanForm: React.FC = () => {
         <BackButton onClick={handleBack} show={currentStepIndex > 0} />
         <StepProgress currentStep={currentStepIndex + 1} totalSteps={steps.length} />
       </div>
-
-      {/* Step Title and Description */}
-      <StepHeader
-        title={STEP_CONFIG[currentStep].title}
-        description={STEP_CONFIG[currentStep].description}
-      />
 
       {/* Form */}
       <form id="care-plan-form" data-form="care-plan" className="space-y-6" onSubmit={handleNext}>
