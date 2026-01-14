@@ -1,28 +1,94 @@
 /**
  * Visit Type Step Component
- * Second step of the care plan form - PLACEHOLDER
+ * Second step of the care plan form - Choose between In-Home or Video visit
  */
 
 import React from 'react';
+import VisitTypeCard, { VisitTypeCardProps } from './VisitTypeCard';
+import { HomeIcon, VideoIcon } from './Icons';
 
-const VisitTypeStep: React.FC = () => {
+export type VisitType = 'in-home' | 'video';
+
+type VisitTypeOption = Omit<VisitTypeCardProps, 'isSelected' | 'onSelect'> & {
+  value: VisitType;
+};
+
+interface VisitTypeStepProps {
+  selectedType: VisitType | null;
+  onSelect: (visitType: VisitType) => void;
+}
+
+/**
+ * Visit type options configuration
+ */
+const visitTypeOptions: VisitTypeOption[] = [
+  {
+    value: 'in-home',
+    icon: <HomeIcon className="w-7 h-7" />,
+    title: 'In-Home visit',
+    description: 'A nurse visits you at home',
+    benefits: [
+      { text: 'No tech required' },
+      { text: '9am – 7pm, plus weekends' },
+      { text: 'Family can join in person' },
+    ],
+    price: '$299',
+    priceDescription: 'includes visit and Care Plan',
+    buttonText: 'Choose in-home',
+  },
+  {
+    value: 'video',
+    icon: <VideoIcon className="w-7 h-7" />,
+    title: 'Video visit',
+    description: 'Meet with a nurse by Zoom',
+    benefits: [
+      { text: 'Internet / Zoom required' },
+      { text: '9am – 6pm ET weekdays only' },
+      { text: 'Family can join from anywhere' },
+    ],
+    price: '$249',
+    priceDescription: 'includes visit and Care Plan',
+    buttonText: 'Choose video',
+  },
+];
+
+const VisitTypeStep: React.FC<VisitTypeStepProps> = ({ selectedType, onSelect }) => {
   return (
-    <>
+    <section aria-labelledby="visit-type-heading">
       {/* Title and Description */}
-      <div className="mb-8">
-        <h2 className="text-4xl font-serif mb-4">What type of visit do you need?</h2>
-        <p className="text-gray-600">Select the type of care visit you require.</p>
-        <p className="text-sm text-gray-500 mt-2">* Indicates a required field</p>
-      </div>
+      <header className="mb-8">
+        <h2 id="visit-type-heading" className="text-4xl font-serif mb-4">
+          Choose how you'd like to meet with your nurse
+        </h2>
+        <p className="text-gray-600">
+          Both options provide the same 1-hour nurse evaluation and written Care Plan.
+          CareScout has provided evaluations to families for <strong>over 20 years</strong>.
+        </p>
+      </header>
 
-      {/* Placeholder Content */}
-      <div className="py-8 text-center">
-        <div className="bg-gray-100 rounded-lg p-12 border-2 border-dashed border-gray-300">
-          <h3 className="text-2xl font-semibold text-gray-700 mb-2">Visit Type Selection</h3>
-          <p className="text-gray-500">This step will be implemented next</p>
-        </div>
+      {/* Visit Type Cards */}
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        role="group"
+        aria-label="Visit type options"
+      >
+        {visitTypeOptions.map((option) => (
+          <VisitTypeCard
+            key={option.value}
+            value={option.value}
+            icon={option.icon}
+            title={option.title}
+            description={option.description}
+            benefits={option.benefits}
+            price={option.price}
+            priceDescription={option.priceDescription}
+            buttonText={option.buttonText}
+            isSelected={selectedType === option.value}
+            onSelect={() => onSelect(option.value)}
+          />
+        ))}
       </div>
-    </>
+    </section>
   );
 };
 

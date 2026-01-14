@@ -15,12 +15,14 @@ import {
 } from './care-plan-steps';
 
 type FormStep = 'intro' | 'visitType' | 'location' | 'scheduling' | 'review';
+type VisitType = 'in-home' | 'video' | null;
 
 interface FormData {
   firstName: string;
   lastName: string;
   email: string;
   carePlanFor: string;
+  visitType: VisitType;
 }
 
 const CarePlanForm: React.FC = () => {
@@ -30,6 +32,7 @@ const CarePlanForm: React.FC = () => {
     lastName: '',
     email: '',
     carePlanFor: '',
+    visitType: null,
   });
 
   const steps: FormStep[] = ['intro', 'visitType', 'location', 'scheduling', 'review'];
@@ -58,6 +61,15 @@ const CarePlanForm: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleVisitTypeSelect = (visitType: 'in-home' | 'video') => {
+    setFormData((prev) => ({ ...prev, visitType }));
+    // Navigate to next step
+    const nextIndex = currentStepIndex + 1;
+    if (nextIndex < steps.length) {
+      setCurrentStep(steps[nextIndex]);
+    }
+  };
+
   return (
     <div>
       {/* Back Button and Progress Bar */}
@@ -70,20 +82,27 @@ const CarePlanForm: React.FC = () => {
       <form id="care-plan-form" data-form="care-plan" className="space-y-6" onSubmit={handleNext}>
         {/* Render current step */}
         {currentStep === 'intro' && <IntroStep formData={formData} onChange={handleInputChange} />}
-        {currentStep === 'visitType' && <VisitTypeStep />}
-        {currentStep === 'location' && <LocationStep />}
+        {currentStep === 'visitType' && (
+          <VisitTypeStep
+            selectedType={formData.visitType}
+            onSelect={handleVisitTypeSelect}
+          />
+        )}
+        {currentStep === 'location' && <LocationStep visitType={formData.visitType} />}
         {currentStep === 'scheduling' && <SchedulingStep />}
         {currentStep === 'review' && <ReviewStep />}
 
-        {/* Continue/Submit Button */}
-        <div className="pt-4">
-          <button
-            type="submit"
-            className="w-full bg-purple-primary text-white py-4 px-6 rounded-lg hover:bg-purple-dark transition-colors font-medium text-lg"
-          >
-            {currentStep === 'review' ? 'Submit' : 'Continue'}
-          </button>
-        </div>
+        {/* Continue/Submit Button - Hidden on visitType step since cards handle navigation */}
+        {currentStep !== 'visitType' && (
+          <div className="pt-4">
+            <button
+              type="submit"
+              className="w-full bg-purple-primary text-white py-4 px-6 rounded-lg hover:bg-purple-dark transition-colors font-medium text-lg"
+            >
+              {currentStep === 'review' ? 'Submit' : 'Continue'}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

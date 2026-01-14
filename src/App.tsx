@@ -6,6 +6,7 @@
 import React from 'react';
 import HeroBanner from './components/HeroBanner';
 import CarePlanModal from './components/CarePlanModal';
+import CarePlanModalHtmx from './components/CarePlanModalHtmx';
 import ConfirmationModal from './components/ConfirmationModal';
 import ExampleModal from './components/ExampleModal';
 import { MODAL_IDS } from './constants/modal-ids';
@@ -18,6 +19,7 @@ const CONTENT = {
   PAGE_TITLE: 'Care Plan Modal Demo',
   BUTTONS: {
     OPEN_CARE_PLAN: 'Open Care Plan Form',
+    OPEN_CARE_PLAN_HTMX: 'Open HTMX Preview',
     OPEN_EXAMPLE: 'Open Example Modal',
   },
 } as const;
@@ -47,6 +49,14 @@ const App: React.FC = () => {
               </button>
 
               <button
+                data-modal-open="care-plan-htmx-preview"
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+                type="button"
+              >
+                {CONTENT.BUTTONS.OPEN_CARE_PLAN_HTMX}
+              </button>
+
+              <button
                 data-modal-open={MODAL_IDS.EXAMPLE}
                 className="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
                 type="button"
@@ -60,6 +70,7 @@ const App: React.FC = () => {
 
       {/* Modals */}
       <CarePlanModal />
+      <CarePlanModalHtmx />
       <ConfirmationModal />
       <ExampleModal />
     </>
