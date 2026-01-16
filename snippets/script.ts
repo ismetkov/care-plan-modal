@@ -38,3 +38,13 @@ document.addEventListener("submit", (e: SubmitEvent) => {
     Virtual
   </button>
 </form>;
+
+
+
+const onst visitType = Array.isArray(formData.visitType) 
+  ? formData.visitType.at(-1) 
+  : formData.visitType;
+  
+const action = Array.isArray(formData._action)
+  ? formData._action.at(-1)
+  : formData._action || (visitType ? 'NEXT' : null);
