@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import {
   IntroStep,
   VisitTypeStep,
-  LocationStep,
+  VisitDetailsStep,
   SchedulingStep,
   ReviewStep,
   StepProgress,
@@ -23,6 +23,13 @@ interface FormData {
   email: string;
   carePlanFor: string;
   visitType: VisitType;
+  // Location fields
+  address: string;
+  apartment: string;
+  city: string;
+  state: string;
+  zip: string;
+  phone: string;
 }
 
 const CarePlanForm: React.FC = () => {
@@ -33,6 +40,13 @@ const CarePlanForm: React.FC = () => {
     email: '',
     carePlanFor: '',
     visitType: null,
+    // Location fields
+    address: '',
+    apartment: '',
+    city: '',
+    state: '',
+    zip: '',
+    phone: '',
   });
 
   const steps: FormStep[] = ['intro', 'visitType', 'location', 'scheduling', 'review'];
@@ -88,7 +102,21 @@ const CarePlanForm: React.FC = () => {
             onSelect={handleVisitTypeSelect}
           />
         )}
-        {currentStep === 'location' && <LocationStep visitType={formData.visitType} />}
+        {currentStep === 'location' && (
+          <VisitDetailsStep
+            visitType={formData.visitType}
+            formData={{
+              address: formData.address,
+              apartment: formData.apartment,
+              city: formData.city,
+              state: formData.state,
+              zip: formData.zip,
+              phone: formData.phone,
+            }}
+            onChange={handleInputChange}
+            recipientName={formData.firstName}
+          />
+        )}
         {currentStep === 'scheduling' && <SchedulingStep />}
         {currentStep === 'review' && <ReviewStep />}
 

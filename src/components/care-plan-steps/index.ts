@@ -6,7 +6,7 @@
 // Step Components
 export { default as IntroStep } from "./IntroStep";
 export { default as VisitTypeStep } from "./VisitTypeStep";
-export { default as LocationStep } from "./LocationStep";
+export { default as VisitDetailsStep } from "./location-step/LocationStep";
 export { default as SchedulingStep } from "./SchedulingStep";
 export { default as ReviewStep } from "./ReviewStep";
 
