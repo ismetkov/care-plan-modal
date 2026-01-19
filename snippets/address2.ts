@@ -9,23 +9,34 @@ root.dispatchEvent(
 );
 
 document.addEventListener("google-address:selected", (e) => {
-  const root = e.target.closest("[data-google-address-root]") || e.target;
+  const ce = e as CustomEvent; // detail exists now
+  const target = ce.target;
+
+  // target must be an Element to use closest()
+  const root =
+    target instanceof Element
+      ? (target.closest("[data-google-address-root]") ?? target)
+      : null;
+
+  if (!root) return;
+
   const form = root.closest("form");
   if (!form) return;
 
-  const details = e.detail;
+  const details = ce.detail;
 
-  // clear + set (always overwrite)
-  const set = (selector, value) => {
-    const el = form.querySelector(selector);
+  const set = (selector: string, value: any) => {
+    const el = form.querySelector(selector) as HTMLInputElement | null;
     if (!el) return;
+
+    // always overwrite (clears stale values)
     el.value = value ?? "";
     el.dispatchEvent(new Event("input", { bubbles: true }));
     el.dispatchEvent(new Event("change", { bubbles: true }));
   };
 
-  set('input[name="location"]', details.address);
-  set('input[name="city"]', details.city);
-  set('input[name="zip"]', details.zip);
-  set('input[name="state"]', details.stateCode);
+  set('input[name="location"]', details?.address);
+  set('input[name="city"]', details?.city);
+  set('input[name="zip"]', details?.zip);
+  set('input[name="state"]', details?.stateCode);
 });
