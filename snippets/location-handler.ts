@@ -65,3 +65,8 @@ export async function locationFieldsHandler(req: ReactRouteRequest, res: Respons
 // make HTMX "see" the update
 hiddenInput.dispatchEvent(new Event("input",  { bubbles: true }));
 hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
+
+<div
+  hx-post="..."
+  hx-trigger="change from:input[data-google-address-inner]"
+>
