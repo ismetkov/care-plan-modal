@@ -59,3 +59,9 @@ export async function locationFieldsHandler(req: ReactRouteRequest, res: Respons
 
   return res.status(200).send(html);
 }
+
+
+
+// make HTMX "see" the update
+hiddenInput.dispatchEvent(new Event("input",  { bubbles: true }));
+hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
