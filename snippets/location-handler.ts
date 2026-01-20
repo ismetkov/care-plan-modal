@@ -1,19 +1,14 @@
-type SelectedGoogleAddress = {
-  label?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  stateCode?: string;
-  zip?: string;
-  lat?: number;
-  lng?: number;
-};
-
-function parseSelectedAddress(raw: unknown): SelectedGoogleAddress | null {
+function parseSelectedAddress(raw: unknown): GoogleAddressOption | null {
   if (typeof raw !== "string" || !raw.trim()) return null;
+
   try {
-    return JSON.parse(raw);
-  } catch {
+    // 🔑 important: decode first
+    const decoded = decodeURIComponent(raw);
+
+    return JSON.parse(decoded) as GoogleAddressOption;
+  } catch (err) {
+    // extremely useful during dev
+    console.warn("Failed to parse selected address", raw);
     return null;
   }
 }
