@@ -1,16 +1,19 @@
 function parseSelectedAddress(raw: unknown): GoogleAddressOption | null {
-  if (typeof raw !== "string" || !raw.trim()) return null;
+  if (typeof raw !== "string") return null;
 
-  try {
-    // 🔑 important: decode first
-    const decoded = decodeURIComponent(raw);
+  const s = raw.trim();
+  if (!s) return null;
 
-    return JSON.parse(decoded) as GoogleAddressOption;
-  } catch (err) {
-    // extremely useful during dev
-    console.warn("Failed to parse selected address", raw);
-    return null;
-  }
+  // raw is usually form-urlencoded; try decoded first, then plain
+  const tryParse = (v: string) => {
+    try {
+      return JSON.parse(v) as GoogleAddressOption;
+    } catch {
+      return null;
+    }
+  };
+
+  return tryParse(decodeURIComponent(s)) ?? tryParse(s);
 }
 
 export async function locationFieldsHandler(
