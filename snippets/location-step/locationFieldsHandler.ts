@@ -6,8 +6,13 @@ export async function locationFieldsHandler(
   const formData = { ...(req.body || {}) };
   const visitType = formData.visitType; // 'in-home' or 'video'
 
+  const selectedAddressKey =
+    visitType === 'in-home'
+      ? 'careRecipientAddress-selected-address'
+      : 'city-selected-address';
+
   const locationDetails = parseGoogleAddressDetails(
-    formData['careRecipientAddress-selected-address']
+    formData[selectedAddressKey]
   );
 
   const derived = {
@@ -18,17 +23,15 @@ export async function locationFieldsHandler(
 
   console.log('derived', derived);
 
+  delete formData[selectedAddressKey];
+
+  const mergedFormData = { ...formData, ...derived };
+
   const html = renderToStaticMarkup(
     visitType === 'in-home' ? (
-      <CityStateZipFields
-        formData={{ ...formData, ...derived }}
-        errors={{}}
-      />
+      <CityStateZipFields formData={mergedFormData} errors={{}} />
     ) : (
-      <StateZipFields
-        formData={{ ...formData, ...derived }}
-        errors={{}}
-      />
+      <StateZipFields formData={mergedFormData} errors={{}} />
     )
   );
 
