@@ -1,23 +1,21 @@
 export const VISIT_TYPES = {
-  VIRTUAL: 'virtual',
-  IN_HOME: 'in-home',
+  VIRTUAL: "virtual",
+  IN_HOME: "in-home",
 } as const;
 
-type VisitTypeValue = typeof VISIT_TYPES[keyof typeof VISIT_TYPES];
+type VisitTypeValue = (typeof VISIT_TYPES)[keyof typeof VISIT_TYPES];
 
-export async function carePlansVisitTypeSubmitHandler(
-  res: Response
-) {
+export async function carePlansVisitTypeSubmitHandler(res: Response) {
   const logger = Logger.initWithSymbol(carePlansVisitTypeSubmitHandler);
   const formData = { ...(req.body || {}) };
   const { _action, visitType } = req.body || {};
 
-  logger.verbose('intro submit', { action: _action, visitType, formData });
-  logger.verbose('FORM DATA', formData);
+  logger.verbose("intro submit", { action: _action, visitType, formData });
+  logger.verbose("FORM DATA", formData);
 
   if (_action === FormActions.BACK) {
     const html = renderToStaticMarkup(
-      CarePlansIntroForm({ formData, enableRevalidation: true } as any)
+      CarePlansIntroForm({ formData, enableRevalidation: true } as any),
     );
     return res.status(ResponseCode.SUCCESS).send(html);
   }
@@ -30,16 +28,20 @@ export async function carePlansVisitTypeSubmitHandler(
         .status(ResponseCode.ERROR_RETURN_TO_FORM)
         .send(
           renderToStaticMarkup(
-            CarePlansVisitTypeForm({ formData, errors: { visitType: 'Invalid selection' } } as any)
-          )
+            CarePlansVisitTypeForm({
+              formData,
+              errors: { visitType: "Invalid selection" },
+            } as any),
+          ),
         );
     }
 
     // Clear address fields if visit type changed to prevent data persistence between types
     const previousVisitType = formData.visitType;
-    const visitTypeChanged = previousVisitType && previousVisitType !== visitType;
+    const visitTypeChanged =
+      previousVisitType && previousVisitType !== visitType;
 
-    logger.verbose('visit type change check', {
+    logger.verbose("visit type change check", {
       previousVisitType,
       newVisitType: visitType,
       visitTypeChanged,
@@ -50,37 +52,56 @@ export async function carePlansVisitTypeSubmitHandler(
           ...formData,
           visitType,
           // Clear all address-related fields when visit type changes
-          address: '',
-          apartment: '',
-          city: '',
-          state: '',
-          zip: '',
+          address: "",
+          apartment: "",
+          city: "",
+          state: "",
+          zip: "",
         }
       : { ...formData, visitType };
 
-    logger.verbose('next form data after visit type selection', {
+    logger.verbose("next form data after visit type selection", {
       visitTypeChanged,
-      clearedFields: visitTypeChanged ? ['address', 'apartment', 'city', 'state', 'zip'] : [],
+      clearedFields: visitTypeChanged
+        ? ["address", "apartment", "city", "state", "zip"]
+        : [],
       nextFormData,
     });
 
     // Valid selection - proceed to next step
     const html = renderToStaticMarkup(
-      CarePlansLocationForm({ formData: nextFormData, errors: {} } as any)
+      CarePlansLocationForm({ formData: nextFormData, errors: {} } as any),
     );
     return res.status(ResponseCode.SUCCESS).send(html);
   }
 
   // submit or unknown action -> return error page
-  logger.error('Invalid action or submit action received:', _action);
+  logger.error("Invalid action or submit action received:", _action);
   const errorPage = createError({
-    errors: [{ message: 'Invalid form action' }],
+    errors: [{ message: "Invalid form action" }],
   });
   return res
     .status(ResponseCode.ERROR_RETURN_TO_FORM)
     .send(
       renderToStaticMarkup(
-        CarePlansLocationForm({ formData, errors: {}, errorPage } as any)
-      )
+        CarePlansLocationForm({ formData, errors: {}, errorPage } as any),
+      ),
     );
+}
+
+let currentFormData = nextFormData;
+
+const shouldClearAddress =
+  (visitType === "virtual" && formData["careRecipientAddress"]) ||
+  (visitType === "in-home" &&
+    !formData["careRecipientAddress"] &&
+    formData.city);
+
+if (shouldClearAddress) {
+  currentFormData = {
+    ...nextFormData,
+    city: "",
+    zipCode: "",
+    state: "",
+  };
 }
