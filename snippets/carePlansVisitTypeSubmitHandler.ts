@@ -35,9 +35,38 @@ export async function carePlansVisitTypeSubmitHandler(
         );
     }
 
+    // Clear address fields if visit type changed to prevent data persistence between types
+    const previousVisitType = formData.visitType;
+    const visitTypeChanged = previousVisitType && previousVisitType !== visitType;
+
+    logger.verbose('visit type change check', {
+      previousVisitType,
+      newVisitType: visitType,
+      visitTypeChanged,
+    });
+
+    const nextFormData = visitTypeChanged
+      ? {
+          ...formData,
+          visitType,
+          // Clear all address-related fields when visit type changes
+          address: '',
+          apartment: '',
+          city: '',
+          state: '',
+          zip: '',
+        }
+      : { ...formData, visitType };
+
+    logger.verbose('next form data after visit type selection', {
+      visitTypeChanged,
+      clearedFields: visitTypeChanged ? ['address', 'apartment', 'city', 'state', 'zip'] : [],
+      nextFormData,
+    });
+
     // Valid selection - proceed to next step
     const html = renderToStaticMarkup(
-      CarePlansLocationForm({ formData: { ...formData, visitType }, errors: {} } as any)
+      CarePlansLocationForm({ formData: nextFormData, errors: {} } as any)
     );
     return res.status(ResponseCode.SUCCESS).send(html);
   }
