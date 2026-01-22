@@ -1,10 +1,12 @@
+type AllCarePlansKeys = CarePlansIntroKeys | CarePlansLocationKeys;
+
 function validateField(
   field: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
   data: Record<string, string>,
 ): string | null {
   timeStart(LOG.PERFORMANCE + "validateField - " + field.name);
 
-  const name = field.name as CarePlansIntroKeys;
+  const name = field.name as AllCarePlansKeys;
 
   const RULE_SETS: Record<string, any> = {
     [FormId.CARE_PLANS_INTRO]: CarePlansIntroRules,
