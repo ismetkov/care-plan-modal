@@ -128,44 +128,38 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // ###########
-document.body.addEventListener("htmx:afterSwap", function (e: any) {
-  console.group("🔵🔵🔵 FORM VALIDATION DEBUG");
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialize any existing forms on page load
+  const initialForms = document.querySelectorAll("form");
+  initialForms.forEach((form: HTMLFormElement) => {
+    initializeFormValidation(form);
+  });
 
-  let formsToInitialize: HTMLFormElement[] = [];
+  // Handle HTMX content swaps
+  document.body.addEventListener("htmx:afterSwap", function (e: any) {
+    console.group("🔵🔵🔵 FORM VALIDATION DEBUG");
 
-  // Check if target is a form
-  if (e.detail.target.tagName === "FORM") {
-    formsToInitialize.push(e.detail.target);
-  }
+    let formsToInitialize: HTMLFormElement[] = [];
 
-  // Check for forms inside target
-  const formsInside = e.detail.target.querySelectorAll("form");
-  if (formsInside.length > 0) {
-    // @ts-ignore
-    formsToInitialize.push(...Array.from(formsInside));
-  }
+    // Check if target is a form
+    if (e.detail.target.tagName === "FORM") {
+      formsToInitialize.push(e.detail.target);
+    }
 
-  // Check parent form
-  const parentForm = e.detail.target.closest("form");
-  if (parentForm && !formsToInitialize.includes(parentForm)) {
-    formsToInitialize.push(parentForm);
-  }
+    // Check for forms inside target
+    const formsInside = e.detail.target.querySelectorAll("form");
+    if (formsInside.length > 0) {
+      // @ts-ignore
+      formsToInitialize.push(...Array.from(formsInside));
+    }
 
-  // ONLY log and initialize if we found forms
-  if (formsToInitialize.length > 0) {
-    console.log("Target element:", e.detail.target);
     console.log("Target tag name:", e.detail.target.tagName);
-    console.log("📋 Total forms to initialize:", formsToInitialize.length);
+    console.log("📋 Forms found:", formsToInitialize.length);
 
     formsToInitialize.forEach((form: HTMLFormElement) => {
-      const formId = form.getAttribute("id");
-      console.log("Initializing form:", formId);
       initializeFormValidation(form);
     });
-  } else {
-    // Silent - don't log content-only swaps
-    console.log("⏭️ Skipping - no forms in this swap (content update only)");
-  }
 
-  console.groupEnd();
+    console.groupEnd();
+  });
 });
