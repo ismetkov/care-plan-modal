@@ -126,3 +126,35 @@ document.addEventListener("DOMContentLoaded", function () {
     handleClientsideFormSubmission,
   );
 });
+
+// ###########
+document.body.addEventListener("htmx:afterSwap", function (e: any) {
+  console.group("🔵🔵🔵 FORM VALIDATION DEBUG");
+  console.log("Target element:", e.detail.target);
+  console.log("Target tag name:", e.detail.target.tagName);
+  console.log("Target id:", e.detail.target.id);
+
+  let formsToInitialize: HTMLFormElement[] = [];
+
+  if (e.detail.target.tagName === "FORM") {
+    console.log("✅ Target IS a form");
+    formsToInitialize.push(e.detail.target);
+  }
+
+  const formsInside = e.detail.target.querySelectorAll("form");
+  console.log("Forms inside target:", formsInside.length);
+
+  const parentForm = e.detail.target.closest("form");
+  if (parentForm) {
+    console.log("✅ Found parent form");
+    formsToInitialize.push(parentForm);
+  }
+
+  console.log("📋 Total forms to initialize:", formsToInitialize.length);
+
+  formsToInitialize.forEach((form: HTMLFormElement) => {
+    initializeFormValidation(form);
+  });
+
+  console.groupEnd();
+});
