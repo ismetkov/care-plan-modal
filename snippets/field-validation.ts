@@ -130,31 +130,42 @@ document.addEventListener("DOMContentLoaded", function () {
 // ###########
 document.body.addEventListener("htmx:afterSwap", function (e: any) {
   console.group("🔵🔵🔵 FORM VALIDATION DEBUG");
-  console.log("Target element:", e.detail.target);
-  console.log("Target tag name:", e.detail.target.tagName);
-  console.log("Target id:", e.detail.target.id);
 
   let formsToInitialize: HTMLFormElement[] = [];
 
+  // Check if target is a form
   if (e.detail.target.tagName === "FORM") {
-    console.log("✅ Target IS a form");
     formsToInitialize.push(e.detail.target);
   }
 
+  // Check for forms inside target
   const formsInside = e.detail.target.querySelectorAll("form");
-  console.log("Forms inside target:", formsInside.length);
+  if (formsInside.length > 0) {
+    // @ts-ignore
+    formsToInitialize.push(...Array.from(formsInside));
+  }
 
+  // Check parent form
   const parentForm = e.detail.target.closest("form");
-  if (parentForm) {
-    console.log("✅ Found parent form");
+  if (parentForm && !formsToInitialize.includes(parentForm)) {
     formsToInitialize.push(parentForm);
   }
 
-  console.log("📋 Total forms to initialize:", formsToInitialize.length);
+  // ONLY log and initialize if we found forms
+  if (formsToInitialize.length > 0) {
+    console.log("Target element:", e.detail.target);
+    console.log("Target tag name:", e.detail.target.tagName);
+    console.log("📋 Total forms to initialize:", formsToInitialize.length);
 
-  formsToInitialize.forEach((form: HTMLFormElement) => {
-    initializeFormValidation(form);
-  });
+    formsToInitialize.forEach((form: HTMLFormElement) => {
+      const formId = form.getAttribute("id");
+      console.log("Initializing form:", formId);
+      initializeFormValidation(form);
+    });
+  } else {
+    // Silent - don't log content-only swaps
+    console.log("⏭️ Skipping - no forms in this swap (content update only)");
+  }
 
   console.groupEnd();
 });
