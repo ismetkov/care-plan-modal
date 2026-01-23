@@ -163,3 +163,10 @@ document.addEventListener("DOMContentLoaded", function () {
     console.groupEnd();
   });
 });
+
+document.body.addEventListener("htmx:configRequest", function (e: any) {
+  console.group("🚀🚀🚀 HTMX CONFIG REQUEST TEST");
+  console.log("Target:", e.target);
+  console.log("Target ID:", e.target.getAttribute("id"));
+  console.groupEnd();
+});
