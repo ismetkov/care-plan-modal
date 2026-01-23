@@ -1,3 +1,9 @@
+const VALID_FORM_IDS: string[] = [
+  FormId.CARE_PLANS_INTRO,
+  FormId.CARE_PLANS_VISIT_TYPE,
+  FormId.CARE_PLANS_LOCATION,
+];
+
 const RULE_SETS: Record<string, any> = {
   [FormId.CARE_PLANS_INTRO]: CarePlansIntroRules,
   [FormId.CARE_PLANS_VISIT_TYPE]: CarePlansVisitTypeRules,
@@ -9,9 +15,9 @@ type AllCarePlansKeys =
   | CarePlansVisitTypeKeys
   | CarePlansLocationKeys;
 
+const initializedForms = new Set<string>();
 let formSubmitAttempt = 0;
 
-// Validate a single field
 function validateField(
   field: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
   data: Record<string, string>,
@@ -47,7 +53,6 @@ function validateField(
   return null;
 }
 
-// Update handleFormSubmit to call validation
 function handleFormSubmit(e: any) {
   console.group("🟢🟢🟢 HANDLE SUBMIT");
 
@@ -67,3 +72,90 @@ function handleFormSubmit(e: any) {
 
   console.groupEnd();
 }
+
+function initializeFormValidation(form: HTMLFormElement) {
+  console.group("🔧🔧🔧 INITIALIZE VALIDATION");
+
+  const formId = form.getAttribute("id");
+  console.log("Step A: Form ID =", formId);
+
+  if (!formId || !VALID_FORM_IDS.includes(formId)) {
+    console.log("Step B: Form NOT in valid list, skipping");
+    console.groupEnd();
+    return;
+  }
+
+  if (initializedForms.has(formId)) {
+    console.log("Step C: Form already initialized, skipping");
+    console.groupEnd();
+    return;
+  }
+
+  console.log("Step D: Adding to initialized forms set");
+  initializedForms.add(formId);
+
+  console.log("Step E: Attaching htmx:configRequest listener");
+  form.addEventListener("htmx:configRequest", handleFormSubmit);
+
+  console.log("Step F: Initialization complete ✅");
+  console.groupEnd();
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  console.group("✅✅✅ PAGE LOAD");
+  console.log("Step 1: Page loaded");
+
+  const initialForms = document.querySelectorAll("form");
+  console.log("Step 2: Found", initialForms.length, "forms on page load");
+
+  initialForms.forEach((form: HTMLFormElement, index) => {
+    console.log(`Step 3.${index}: Form ID =`, form.getAttribute("id"));
+    initializeFormValidation(form);
+  });
+  console.groupEnd();
+
+  document.body.addEventListener("htmx:afterSwap", function (e: any) {
+    console.group("🔵🔵🔵 HTMX SWAP");
+    console.log("Step 4: Content swapped");
+
+    let formsToInitialize: HTMLFormElement[] = [];
+
+    if (e.detail.target.tagName === "FORM") {
+      console.log("Step 5: Target IS a form");
+      formsToInitialize.push(e.detail.target);
+    } else {
+      console.log(
+        "Step 5: Target is NOT a form, it is:",
+        e.detail.target.tagName,
+      );
+    }
+
+    const formsInside = e.detail.target.querySelectorAll("form");
+    console.log("Step 6: Found", formsInside.length, "forms inside target");
+
+    if (formsInside.length > 0) {
+      formsToInitialize.push(...Array.from(formsInside));
+    }
+
+    console.log("Step 7: Target tag name:", e.detail.target.tagName);
+    console.log("Step 8: Total forms to process:", formsToInitialize.length);
+
+    formsToInitialize.forEach((form: HTMLFormElement, index) => {
+      console.log(
+        `Step 9.${index}: Processing form ID =`,
+        form.getAttribute("id"),
+      );
+      initializeFormValidation(form);
+    });
+
+    console.groupEnd();
+  });
+});
+
+document.body.addEventListener("htmx:configRequest", function (e: any) {
+  console.group("🚀🚀🚀 FORM SUBMIT");
+  console.log("Step 10: Form submission triggered");
+  console.log("Step 11: Target:", e.target);
+  console.log("Step 12: Target ID:", e.target.getAttribute("id"));
+  console.groupEnd();
+});
